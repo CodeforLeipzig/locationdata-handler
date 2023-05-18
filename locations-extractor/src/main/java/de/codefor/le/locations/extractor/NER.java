@@ -44,9 +44,9 @@ public class NER {
 
     public NER() {
         try {
-            classifier = CRFClassifier.<CoreLabel> getClassifier(new File(SERIALIZED_CLASSIFIER));
+            classifier = CRFClassifier.getClassifier(new File(SERIALIZED_CLASSIFIER));
         } catch (ClassCastException | ClassNotFoundException | IOException e) {
-            Throwables.propagate(e);
+            Throwables.throwIfUnchecked(e);
         }
     }
 
@@ -91,7 +91,7 @@ public class NER {
                 }
             });
         } catch (final IOException e) {
-            Throwables.propagate(e);
+            Throwables.throwIfUnchecked(e);
         }
         logger.debug("initialized location blacklist: {}", blacklist);
         return blacklist;
