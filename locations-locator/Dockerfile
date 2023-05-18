@@ -1,4 +1,4 @@
-FROM develar/java
+FROM eclipse-temurin:17
 
 MAINTAINER Joerg Reichert
 

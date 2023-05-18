@@ -1,15 +1,12 @@
 package de.codefor.le.locations.locator;
 
-import static org.junit.Assert.assertNotNull;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-import org.junit.Test;
-
-import de.codefor.le.locations.locator.Nominatim;
-import de.codefor.le.locations.locator.NominatimAsker;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class NominatimAskerTest {
 

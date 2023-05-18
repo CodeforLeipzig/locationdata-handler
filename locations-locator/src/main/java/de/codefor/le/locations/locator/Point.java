@@ -1,8 +1,10 @@
 package de.codefor.le.locations.locator;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 public class Point implements Serializable {
+	@Serial
 	private static final long serialVersionUID = 325271956854893239L;
 	private Double x;
 	private Double y;

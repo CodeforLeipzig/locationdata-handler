@@ -1,9 +1,9 @@
 package de.codefor.le.locations.locator;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.net.URLEncoder;
+import java.nio.charset.Charset;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 
 import org.slf4j.Logger;
@@ -15,7 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -34,14 +33,15 @@ public class NominatimAsker {
 
     @Async
     public Future<List<Nominatim>> execute(final String address) {
-        List<Nominatim> result = null;
-        try {
-            result = getCoords(address);
-            Thread.sleep(WAIT_BEFORE_EACH_ACCESS_TO_PREVENT_BANNING);
-        } catch (final InterruptedException e) {
-            logger.error(e.toString(), e);
-        }
-        return new AsyncResult<>(result != null ? result : new ArrayList<Nominatim>());
+        return CompletableFuture.supplyAsync(() -> {
+            List<Nominatim> result = getCoords(address);
+            try {
+                Thread.sleep(WAIT_BEFORE_EACH_ACCESS_TO_PREVENT_BANNING);
+            } catch (final InterruptedException e) {
+                logger.error(e.toString(), e);
+            }
+            return result != null ? result : new ArrayList<>();
+        });
     }
 
     private List<Nominatim> getCoords(final String address) {
@@ -49,16 +49,21 @@ public class NominatimAsker {
         logger.debug("url {}", url);
         
         HttpHeaders headers = new HttpHeaders();
-        headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-        HttpEntity<String> entity = new HttpEntity<String>(headers);
-        ResponseEntity<Nominatim[]> response = restTemplate.exchange(url, HttpMethod.GET, entity, Nominatim[].class, "1");
-        if(response.getStatusCode().equals(HttpStatus.OK)) {
-            final List<Nominatim> result = Arrays.asList(response.getBody());
-            logger.debug("nominatim search result: {}", result);
-            return result;
-        } else {
-        	logger.error(response.getStatusCode() + ": " + response.toString());
+        headers.add("Accept", "*/*");
+        //headers.setAccept(List.of(MediaType.APPLICATION_JSON));
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+        try {
+            ResponseEntity<Nominatim[]> response = restTemplate.exchange(url, HttpMethod.GET, entity, Nominatim[].class);
+            if(response.getStatusCode().equals(HttpStatus.OK)) {
+                final List<Nominatim> result = Arrays.asList(Objects.requireNonNull(response.getBody()));
+                logger.debug("nominatim search result: {}", result);
+                return result;
+            } else {
+                logger.error(response.getStatusCode() + ": " + response);
+            }
+        } catch(Exception e) {
+            logger.error(e.getMessage(), e);
         }
-        return Collections.EMPTY_LIST;
+        return Collections.emptyList();
     }
 }

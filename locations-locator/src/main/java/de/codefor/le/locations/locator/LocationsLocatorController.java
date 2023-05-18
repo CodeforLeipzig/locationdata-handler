@@ -1,7 +1,6 @@
 package de.codefor.le.locations.locator;
 
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import org.apache.commons.lang3.math.NumberUtils;
@@ -26,8 +25,7 @@ public class LocationsLocatorController {
 	NominatimAsker nominatimAsker;
 
 	@RequestMapping(value = "/locate", method = RequestMethod.GET, produces = "application/json")
-	public @ResponseBody Point getLocation(@RequestParam("location") String location)
-			throws InterruptedException, ExecutionException {
+	public @ResponseBody Point getLocation(@RequestParam("location") String location) {
 		Point point = null;
 		try {
 			final Future<List<Nominatim>> nomFutures = nominatimAsker
@@ -51,7 +49,7 @@ public class LocationsLocatorController {
 	private Point getCoords(Nominatim nominatim) {
 		final String lat = nominatim.getLat();
 		final String lon = nominatim.getLon();
-		if (NumberUtils.isNumber(lat) && NumberUtils.isNumber(lon)) {
+		if (NumberUtils.isCreatable(lat) && NumberUtils.isCreatable(lon)) {
 			final Point point = new Point(Double.valueOf(lat), Double.valueOf(lon));
 			logger.debug("found point {}", point);
 			return point;
