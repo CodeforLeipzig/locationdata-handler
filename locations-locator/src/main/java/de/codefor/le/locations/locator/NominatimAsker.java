@@ -16,9 +16,10 @@ public class NominatimAsker {
 
     private static final Logger logger = LoggerFactory.getLogger(NominatimAsker.class);
 
+    public static final String NOMINATIM_SEARCH_HOST = "NOMINATIM_SEARCH_HOST";
     public static final String NOMINATIM_SEARCH_CITY_PREFIX = "Leipzig, ";
 
-    private static final String NOMINATIM_SEARCH_URL = "http://localhost:8083/search?q=%s&format=json";
+    private static final String NOMINATIM_SEARCH_URL = "http://%s/search?q=%s&format=json";
 
     private static final int WAIT_BEFORE_EACH_ACCESS_TO_PREVENT_BANNING = 50;
 
@@ -38,7 +39,11 @@ public class NominatimAsker {
     }
 
     private List<Nominatim> getCoords(final String address) {
-        final String url = String.format(NOMINATIM_SEARCH_URL, address);
+        String host = System.getenv(NOMINATIM_SEARCH_HOST);
+        if (host == null || host.isBlank()) {
+            host = "localhost:8083";
+        }
+        final String url = String.format(NOMINATIM_SEARCH_URL, host, address);
         logger.debug("url {}", url);
 
         HttpHeaders headers = new HttpHeaders();
