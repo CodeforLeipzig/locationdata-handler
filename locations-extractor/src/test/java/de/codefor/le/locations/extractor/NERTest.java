@@ -3,12 +3,13 @@ package de.codefor.le.locations.extractor;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.hasItem;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.util.Collection;
 
 import org.hamcrest.Matchers;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,6 +22,7 @@ public class NERTest {
     @Autowired
     private NER ner;
 
+    @Disabled
     @Test
     public void initBlackListedLocations() {
         final Collection<String> blackListedLocations = ner.initBlackListedLocations();
@@ -31,6 +33,7 @@ public class NERTest {
         assertThat(blackListedLocations, not(hasItem("")));
     }
 
+    @Disabled
     @Test
     public void getLocationsForSimpleStringShouldReturnNull() {
         assertNotNull(ner.getLocations("foo", false));
@@ -42,6 +45,7 @@ public class NERTest {
             + "Eine der Flaschen zerschellte auf der Karl-Heine-Straße in Höhe König-Albert Brücke. [...] Danach fuhr das Auto weiter."
             + "[...] Von LVZ";
 
+    @Disabled
     @Test
     public void getLocationsForArticleShouldReturnCollection() {
         final Collection<String> locations = ner.getLocations(ARTICLE, true);

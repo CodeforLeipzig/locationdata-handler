@@ -1,5 +1,12 @@
 # locations extractor
 
+## Build and Publish
+`gradle build -x test`
+`docker-compose build webapp`
+`docker tag locations-extractor_webapp:latest sannsie/locations-extractor:latest`
+`docker login`
+`docker push sannsie/locations-extractor:latest`
+
 ## Start up
 `gradle run`
 

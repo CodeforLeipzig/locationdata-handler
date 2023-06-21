@@ -1,22 +1,15 @@
 package de.codefor.le.locations.locator;
 
-import java.net.URLEncoder;
-import java.nio.charset.Charset;
-import java.util.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Future;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Future;
 
 @Component
 public class NominatimAsker {
@@ -47,21 +40,21 @@ public class NominatimAsker {
     private List<Nominatim> getCoords(final String address) {
         final String url = String.format(NOMINATIM_SEARCH_URL, address);
         logger.debug("url {}", url);
-        
+
         HttpHeaders headers = new HttpHeaders();
         headers.add("Accept", "*/*");
         //headers.setAccept(List.of(MediaType.APPLICATION_JSON));
         HttpEntity<String> entity = new HttpEntity<>(headers);
         try {
             ResponseEntity<Nominatim[]> response = restTemplate.exchange(url, HttpMethod.GET, entity, Nominatim[].class);
-            if(response.getStatusCode().equals(HttpStatus.OK)) {
+            if (response.getStatusCode().equals(HttpStatus.OK)) {
                 final List<Nominatim> result = Arrays.asList(Objects.requireNonNull(response.getBody()));
                 logger.debug("nominatim search result: {}", result);
                 return result;
             } else {
                 logger.error(response.getStatusCode() + ": " + response);
             }
-        } catch(Exception e) {
+        } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }
         return Collections.emptyList();

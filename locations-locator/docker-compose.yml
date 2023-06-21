@@ -2,6 +2,7 @@ version: '3'
 
 services:
   webapp:
+    #image: sannsie/locations-locator:latest
     build: .
     depends_on:
       - nominatim
